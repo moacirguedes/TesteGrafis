@@ -1,0 +1,32 @@
+<mat-toolbar color="primary">
+	<mat-toolbar-row>
+		<span>Novo Cliente</span>
+	</mat-toolbar-row>
+</mat-toolbar>
+
+<mat-card style="margin:32px;">
+
+	<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+		<mat-form-field class="full-width">
+			<input matInput placeholder="Nome" formControlName="nome" required>
+			<mat-error *ngIf="form.controls.nome.hasError('required')">
+				O nome é <strong>requerido</strong>
+			</mat-error>
+		</mat-form-field>
+
+		<mat-form-field class="full-width">
+			<input matInput placeholder="Email" type="email" formControlName="email" required>
+			<mat-error *ngIf="form.controls.email.hasError('required')">
+				O email é <strong>requerido</strong>
+			</mat-error>
+		</mat-form-field>
+
+		<br />
+		<br />
+
+		<button mat-raised-button color="primary">Salvar</button>
+
+	</form>
+
+</mat-card>

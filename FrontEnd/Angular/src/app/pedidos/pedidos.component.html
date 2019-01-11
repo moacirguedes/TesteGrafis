@@ -1,0 +1,20 @@
+<mat-toolbar color="primary">
+	<mat-toolbar-row>
+		<span>Pedidos</span>
+	</mat-toolbar-row>
+</mat-toolbar>
+
+<div style="margin:32px;">
+
+	<button mat-raised-button color="primary" (click)="novoPedido()">Novo Pedido</button>
+
+	<br />
+
+	<mat-nav-list>
+		<mat-list-item *ngFor="let pedido of pedidos">
+			<mat-icon>shopping-basket</mat-icon>
+			Número do pedido: {{ pedido.Id }}
+		</mat-list-item>
+	</mat-nav-list>
+
+</div>

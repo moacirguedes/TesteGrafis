@@ -1,0 +1,24 @@
+<mat-toolbar color="primary">
+	<mat-toolbar-row>
+		<span>Clientes</span>
+	</mat-toolbar-row>
+</mat-toolbar>
+
+<div style="margin:32px;">
+
+	<button mat-raised-button color="primary" (click)="novo()">Novo Cliente</button>
+
+	<br />
+
+	<mat-nav-list>
+		<mat-list-item *ngFor="let cliente of clientes">
+			<div>
+				<mat-icon>account_circle</mat-icon>
+				Nome: {{ cliente.Nome }}
+				<br />
+				Email: {{ cliente.Email }}
+			</div>
+		</mat-list-item>
+	</mat-nav-list>
+
+</div>

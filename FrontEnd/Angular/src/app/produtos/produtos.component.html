@@ -1,0 +1,22 @@
+<mat-toolbar color="primary">
+	<mat-toolbar-row>
+		<span>Produtos</span>
+	</mat-toolbar-row>
+</mat-toolbar>
+
+<div style="margin:32px;">
+
+	<button mat-raised-button color="primary" (click)="novoProduto()">Novo Produto</button>
+
+	<br />
+
+	<mat-nav-list>
+		<mat-list-item *ngFor="let produto of produtos">
+			<mat-icon>list</mat-icon>
+			{{ produto.Descricao }}
+			<br />
+			{{ produto.Valor }}
+		</mat-list-item>
+	</mat-nav-list>
+
+</div>
