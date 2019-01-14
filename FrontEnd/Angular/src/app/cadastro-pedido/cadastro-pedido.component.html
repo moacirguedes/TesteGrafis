@@ -9,23 +9,40 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
         <mat-form-field class="full-width">
-            <mat-select placeholder="Cliente" required>
-                <mat-option *ngFor="let cliente of clientes" [value]="cliente.Id">
+            <mat-select placeholder="Cliente" formControlName="idCliente" required>
+                <mat-option *ngFor="let cliente of clientes" value="{{cliente.Id}}">
                     {{cliente.Nome}}
                 </mat-option>
             </mat-select>
+            <mat-error *ngIf="form.controls.idCliente.hasError('required')">
+                Selecione um cliente
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field class="full-width">
-            <mat-select placeholder="Produto" multiple required>
-                <mat-option *ngFor="let produto of produtos" [value]="produto.Valor">
+            <mat-select placeholder="Produto" multiple formControlName="idProdutos" (selectionChange)="sum($event)">
+                <mat-option *ngFor="let produto of produtos" value="{{produto.Id}}">
                     {{produto.Descricao}} - {{produto.Valor}}
                 </mat-option>
             </mat-select>
+            <mat-error *ngIf="form.controls.idProdutos.hasError('required')">
+                Selecione um ou mais produto(s).
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field class="full-width">
-            <input matInput placeholder="Desconto" type="number" value="0" formControlName="desconto">
+            <input matInput placeholder="Valor" type="number" formControlName="valor">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="Desconto" type="number" formControlName="desconto" (input)="applyDiscount()">
+            <mat-error *ngIf="form.controls.desconto.hasError('min')">
+                Insira um valor maior ou igual a zero.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <input matInput placeholder="Valor Total" type="number" formControlName="valorTotal">
         </mat-form-field>
 
         <br />

@@ -1,5 +1,4 @@
 ﻿using AspNetWebApi.Context;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -15,7 +14,6 @@ namespace AspNetWebApi.Controllers
             public long Id { get; set; }
             public string Descricao { get; set; }
             public double Valor { get; set; }
-            public byte[] Imagem { get; set; }
         }
 
         [HttpGet]
@@ -70,7 +68,7 @@ namespace AspNetWebApi.Controllers
         }
 
         [HttpPost]
-        public void Post(NovoProduto novoProduto)
+        public HttpResponseMessage Post(NovoProduto novoProduto)
         {
             using (var contexto = new Contexto())
             {
@@ -82,6 +80,8 @@ namespace AspNetWebApi.Controllers
 
                 contexto.Produtos.Add(produtoModelo);
                 contexto.SaveChanges();
+                
+                return Request.CreateResponse(HttpStatusCode.OK, produtoModelo.Id);
             }
         }
     }

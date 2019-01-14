@@ -6,6 +6,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 class NovoProduto {
 	public IdContato: number;
 	public Descricao: string;
+	public Imagem: File;
 }
 
 @Component({
@@ -17,6 +18,8 @@ export class CadastroProdutoComponent implements OnInit {
 
 	form: FormGroup;
 
+	imagem: File;
+
 	httpOptions = {
 		headers: new HttpHeaders({
 			'Content-Type': 'application/json'
@@ -26,11 +29,16 @@ export class CadastroProdutoComponent implements OnInit {
 	constructor(private formBuilder: FormBuilder, private http: HttpClient, private router: Router, private activatedRoute: ActivatedRoute) {
 		this.form = this.formBuilder.group({
 			descricao: ['', Validators.required],
-			valor: ['', Validators.required]
+			valor: ['', Validators.compose([Validators.required, Validators.min(1)])],
+			imagem: ['', Validators.required]
 		});
 	}
 
 	ngOnInit() {
+	}
+
+	onFileChanged(event) {
+		this.imagem = event.target.files[0]
 	}
 
 	onSubmit() {
@@ -42,10 +50,17 @@ export class CadastroProdutoComponent implements OnInit {
 		let novoProduto = this.form.value as NovoProduto;
 
 		this.http.post('http://localhost:49493/api/produtos/', JSON.stringify(novoProduto), this.httpOptions)
-			.subscribe(data => {
-				this.router.navigate(['produtos']);
-			}, error => {
-				console.log('Error', error);
+			.subscribe(result => {
+
+				const uploadImagem = new FormData();
+				uploadImagem.append(result.toString(), this.imagem);
+
+				this.http.post('http://localhost:49493/api/imagem/', uploadImagem)
+					.subscribe(data => {
+						this.router.navigate(['produtos']);
+					}, error => {
+						console.log('Error', error);
+					});
 			});
 
 	}

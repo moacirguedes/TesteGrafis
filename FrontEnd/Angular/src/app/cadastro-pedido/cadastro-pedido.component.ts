@@ -2,9 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { DISABLED } from '@angular/forms/src/model';
+import { forEach } from '@angular/router/src/utils/collection';
+import { containsElement } from '@angular/animations/browser/src/render/shared';
 
 class NovoPedido {
 	public Data: Date;
+	public IdCliente: number;
+	public IdProdutos: number[];
 	public Valor: number;
 	public Desconto: number;
 	public ValorTotal: number;
@@ -42,7 +47,11 @@ export class CadastroPedidoComponent implements OnInit {
 
 	constructor(private formBuilder: FormBuilder, private http: HttpClient, private router: Router, private activatedRoute: ActivatedRoute) {
 		this.form = this.formBuilder.group({
-			desconto: ['']
+			desconto: ['0', Validators.min(0)],
+			idCliente: ['', Validators.required],
+			idProdutos: ['', Validators.required],
+			valor: [{ value: '0', disabled: true }, Validators.required],
+			valorTotal: [{ value: '0', disabled: true }, Validators.required]
 		});
 	}
 
@@ -54,13 +63,35 @@ export class CadastroPedidoComponent implements OnInit {
 			.subscribe(x => this.produtos = x);
 	}
 
+	sum(event) {
+		let valorParcial = 0;
+
+		this.produtos.forEach(function (p) {
+			if (event.value.indexOf(p.Id.toString()) >= 0) {
+				valorParcial += p.Valor;
+			}
+		});
+
+		this.form.controls['valor'].setValue(valorParcial);
+
+		valorParcial -= this.form.controls['desconto'].value;
+
+		this.form.controls['valorTotal'].setValue(valorParcial < 0 ? 0 : valorParcial);
+	}
+
+	applyDiscount() {
+		let valorTotal = this.form.controls['valor'].value - this.form.controls['desconto'].value;
+
+		this.form.controls['valorTotal'].setValue(valorTotal < 0 ? 0 : valorTotal);
+	}
+
 	onSubmit() {
 
 		if (this.form.invalid) {
 			return;
 		}
 
-		let novoPedido = this.form.value as NovoPedido;
+		let novoPedido = this.form.getRawValue() as NovoPedido;
 
 		this.http.post('http://localhost:49493/api/pedidos/', JSON.stringify(novoPedido), this.httpOptions)
 			.subscribe(data => {
@@ -68,7 +99,6 @@ export class CadastroPedidoComponent implements OnInit {
 			}, error => {
 				console.log('Error', error);
 			});
-
 	}
 }
 

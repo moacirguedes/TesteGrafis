@@ -6,7 +6,7 @@
 
 <mat-card style="margin:32px;">
 
-	<form [formGroup]="form" (ngSubmit)="onSubmit()">
+	<form [formGroup]="form">
 
 		<mat-form-field class="full-width">
 			<textarea matInput placeholder="Descrição" formControlName="descricao" required></textarea>
@@ -20,12 +20,29 @@
 			<mat-error *ngIf="form.controls.valor.hasError('required')">
 				O valor é <strong>requerido</strong>
 			</mat-error>
+			<mat-error *ngIf="form.controls.valor.hasError('min')">
+				O valor precisa ser maior do que zero
+			</mat-error>
 		</mat-form-field>
 
 		<br />
+
+		<div>
+			<input style="display: none" type="file" formControlName="imagem" (change)="onFileChanged($event)" #fileInput
+			 required>
+			<button mat-raised-button color="accent" (click)="fileInput.click()">
+				<mat-icon>attach_file</mat-icon> Selecionar Imagem
+			</button>
+
+			<mat-error *ngIf="form.controls.imagem.hasError('required')">
+				Selecione uma imagem
+			</mat-error>
+
+		</div>
+
 		<br />
 
-		<button mat-raised-button color="primary">Salvar</button>
+		<button mat-raised-button color="primary" (click)="onSubmit()">Salvar</button>
 
 	</form>
 

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 class Cliente {
+	public Id: number;
 	public Nome: string;
 	public Email: string;
 }
@@ -31,7 +32,11 @@ export class ClientesComponent implements OnInit {
 			});
 	}
 
-	novo() {
+	edit(cliente: Cliente) {
+		this.router.navigate(['clientes/' + cliente.Id + '/editar']);
+	}
+
+	new() {
 		this.router.navigate(['clientes/cadastro']);
 	}
 }

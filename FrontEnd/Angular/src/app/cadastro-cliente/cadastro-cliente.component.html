@@ -20,6 +20,9 @@
 			<mat-error *ngIf="form.controls.email.hasError('required')">
 				O email é <strong>requerido</strong>
 			</mat-error>
+			<mat-error *ngIf="form.controls.email.hasError('email')">
+				Insira um email valido
+			</mat-error>
 		</mat-form-field>
 
 		<br />

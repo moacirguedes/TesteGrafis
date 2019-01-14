@@ -6,15 +6,38 @@
 
 <div style="margin:32px;">
 
-	<button mat-raised-button color="primary" (click)="novoPedido()">Novo Pedido</button>
+	<button mat-raised-button color="primary" (click)="newOrder()">Novo Pedido</button>
 
 	<br />
+	<br />
 
-	<mat-nav-list>
-		<mat-list-item *ngFor="let pedido of pedidos">
-			<mat-icon>shopping-basket</mat-icon>
-			Número do pedido: {{ pedido.Id }}
-		</mat-list-item>
-	</mat-nav-list>
+	<mat-expansion-panel *ngFor="let pedido of pedidos">
+		<mat-expansion-panel-header>
+			<mat-panel-title>
+				<mat-icon>note</mat-icon>
+				Pedido: {{ pedido.Id }}
+			</mat-panel-title>
+		</mat-expansion-panel-header>
+		Cliente: {{ pedido.Cliente.Nome }}
+		<br />
+
+		Data: {{ pedido.Data | date:'dd-MM-yyyy HH:mm' }}
+		<br />
+
+		<span *ngFor="let p of pedido.Produtos">
+			Produto: {{ p.Descricao }}
+			<br />
+		</span>
+
+		Valor: R$ {{ pedido.Valor }}
+		<br />
+
+		Desconto: R$ {{ pedido.Desconto }}
+		<br />
+
+		Valor Total: R$ {{ pedido.ValorTotal }}
+		<br />
+
+	</mat-expansion-panel>
 
 </div>

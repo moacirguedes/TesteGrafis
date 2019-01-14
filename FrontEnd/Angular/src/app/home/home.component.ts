@@ -9,19 +9,19 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 })
 export class HomeComponent implements OnInit {
 
-    constructor(private http: HttpClient, private router: Router) { }
+	constructor(private http: HttpClient, private router: Router) { }
 
-    ngOnInit() { }
+	ngOnInit() { }
 
-	clientes() {
+	clients() {
 		this.router.navigate(['clientes']);
 	}
 
-	pedidos() {
+	orders() {
 		this.router.navigate(['pedidos']);
-    }
-    
-    produtos() {
+	}
+
+	products() {
 		this.router.navigate(['produtos']);
 	}
 

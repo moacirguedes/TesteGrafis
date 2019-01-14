@@ -1,0 +1,38 @@
+<mat-toolbar color="primary">
+        <mat-toolbar-row>
+            <span>Editar Cliente</span>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    
+    <mat-card style="margin:32px;">
+    
+        <form [formGroup]="form">
+    
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Nome" value="{{cliente.Nome}}" formControlName="nome" required>
+                <mat-error *ngIf="form.controls.nome.hasError('required')">
+                    O nome é <strong>requerido</strong>
+                </mat-error>
+            </mat-form-field>
+    
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Email" type="email" value={{cliente.Email}} formControlName="email" required>
+                <mat-error *ngIf="form.controls.email.hasError('required')">
+                    O email é <strong>requerido</strong>
+                </mat-error>
+                <mat-error *ngIf="form.controls.email.hasError('email')">
+                    Insira um email valido
+                </mat-error>
+            </mat-form-field>
+    
+            <br />
+            <br />
+    
+            <div>
+                <button mat-raised-button color="primary" (click)="edit()">Editar</button>
+                <button mat-raised-button color="secondary" style="float:right;" (click)="delete()">Apagar</button>
+            </div>
+    
+        </form>
+    
+    </mat-card>

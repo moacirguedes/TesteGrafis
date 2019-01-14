@@ -1,115 +1,121 @@
-﻿using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Net;
+﻿using AspNetWebApi.Context;
+using System;
+using System.Data.Entity;
+using System.Collections.Generic;
 using System.Web.Http;
-using System.Web.Http.Description;
-using AspNetWebApi.Context;
-using AspNetWebApi.Models;
+using System.Linq;
 
 namespace AspNetWebApi.Controllers
 {
     public class PedidosController : ApiController
     {
-        private Contexto db = new Contexto();
-
-        // GET: api/Pedidos
-        public IQueryable<Pedido> GetPedidos()
+        public class Pedido
         {
-            return db.Pedidos;
+            public long Id { get; set; }
+            public DateTime Data { get; set; }
+            public List<Models.Produto> Produtos { get; set; }
+            public Models.Cliente Cliente { get; set; }
+            public double Valor { get; set; }
+            public double Desconto { get; set; }
+            public double ValorTotal { get; set; }
         }
 
-        // GET: api/Pedidos/5
-        [ResponseType(typeof(Pedido))]
-        public IHttpActionResult GetPedido(long id)
+        [HttpGet]
+        public List<Pedido> Get()
         {
-            Pedido pedido = db.Pedidos.Find(id);
-            if (pedido == null)
+            using (var db = new Contexto())
             {
-                return NotFound();
-            }
+                var pedidosModelo = db.Pedidos
+                    .Include(x => x.Cliente)
+                    .Include(x => x.Produtos)
+                    .ToList();
 
-            return Ok(pedido);
+                var pedidosProxy = new List<Pedido>();
+
+                foreach (var pedidoModelo in pedidosModelo)
+                {
+                    var pedidoProxy = new Pedido()
+                    {
+                        Id = pedidoModelo.Id,
+                        Data = pedidoModelo.Data,
+                        Produtos = pedidoModelo.Produtos,
+                        Cliente = pedidoModelo.Cliente,
+                        Valor = pedidoModelo.Valor,
+                        Desconto = pedidoModelo.Desconto,
+                        ValorTotal = pedidoModelo.ValorTotal
+                    };
+
+                    pedidosProxy.Add(pedidoProxy);
+                }
+
+                return pedidosProxy;
+            }
         }
 
-        // PUT: api/Pedidos/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutPedido(long id, Pedido pedido)
+        [HttpGet]
+        public Pedido Get(long id)
         {
-            if (!ModelState.IsValid)
+            using (var db = new Contexto())
             {
-                return BadRequest(ModelState);
+                var pedidoModelo = db.Pedidos
+                    .Include(x => x.Cliente)
+                    .Include(x => x.Produtos)
+                    .Where(x => x.Id == id)
+                    .Single();
+                
+                var pedidoProxy = new Pedido()
+                {
+                    Id = pedidoModelo.Id,
+                    Data = pedidoModelo.Data,
+                    Produtos = pedidoModelo.Produtos,
+                    Cliente = pedidoModelo.Cliente,
+                    Valor = pedidoModelo.Valor,
+                    Desconto = pedidoModelo.Desconto,
+                    ValorTotal = pedidoModelo.ValorTotal
+                }; 
+
+                return pedidoProxy;
             }
+        }
 
-            if (id != pedido.Id)
+        public class NovoPedido
+        {
+            public DateTime Data { get; set; }
+            public List<long> IdProdutos { get; set; }
+            public long IdCliente { get; set; }
+            public double Valor { get; set; }
+            public double Desconto { get; set; }
+            public double ValorTotal { get; set; }
+        }
+
+        [HttpPost]
+        public void Post(NovoPedido novoPedido)
+        {
+            using (var db = new Contexto())
             {
-                return BadRequest();
-            }
+                var clienteModelo = db.Clientes.Where(x => x.Id == novoPedido.IdCliente).Single();
 
-            db.Entry(pedido).State = EntityState.Modified;
+                var produtosModelo = new List<Models.Produto>();
 
-            try
-            {
+                foreach (var produto in novoPedido.IdProdutos)
+                {
+                    produtosModelo.Add(db.Produtos.Where(x => x.Id == produto).Single());
+                }
+
+                var pedidoModelo = new Models.Pedido()
+                {
+                    Data = DateTime.Now,
+                    Produtos = produtosModelo,
+                    Cliente = clienteModelo,
+                    Valor = novoPedido.Valor,
+                    Desconto = novoPedido.Desconto,
+                    ValorTotal = novoPedido.ValorTotal
+                };
+
+                db.Pedidos.Add(pedidoModelo);
                 db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PedidoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Pedidos
-        [ResponseType(typeof(Pedido))]
-        public IHttpActionResult PostPedido(Pedido pedido)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.Pedidos.Add(pedido);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = pedido.Id }, pedido);
-        }
-
-        // DELETE: api/Pedidos/5
-        [ResponseType(typeof(Pedido))]
-        public IHttpActionResult DeletePedido(long id)
-        {
-            Pedido pedido = db.Pedidos.Find(id);
-            if (pedido == null)
-            {
-                return NotFound();
-            }
-
-            db.Pedidos.Remove(pedido);
-            db.SaveChanges();
-
-            return Ok(pedido);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private bool PedidoExists(long id)
-        {
-            return db.Pedidos.Count(e => e.Id == id) > 0;
-        }
     }
 }

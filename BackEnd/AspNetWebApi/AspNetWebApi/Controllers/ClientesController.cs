@@ -1,11 +1,11 @@
 ﻿using AspNetWebApi.Context;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace AspNetWebApi.Controllers
 {
@@ -63,6 +63,27 @@ namespace AspNetWebApi.Controllers
             }
         }
 
+        [HttpDelete]
+        public HttpResponseMessage Delete(long id)
+        {
+            using (var contexto = new Contexto())
+            {
+                var clienteModelo = contexto.Clientes
+                    .Where(x => x.Id == id)
+                    .Single();
+
+                try
+                {
+                    contexto.Clientes.Remove(clienteModelo);
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                catch (Exception ex)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, ex);
+                }
+            }
+        }
+
         public class NovoCliente
         {
             public string Nome { get; set; }
@@ -70,7 +91,7 @@ namespace AspNetWebApi.Controllers
         }
 
         [HttpPost]
-        public void Post(NovoCliente novoCliente)
+        public HttpResponseMessage Post(NovoCliente novoCliente)
         {
             using (var contexto = new Contexto())
             {
@@ -80,8 +101,40 @@ namespace AspNetWebApi.Controllers
                     Email = novoCliente.Email
                 };
 
-                contexto.Clientes.Add(clienteModelo);
-                contexto.SaveChanges();
+                try
+                {
+                    contexto.Clientes.Add(clienteModelo);
+                    contexto.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                catch (Exception ex)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Conflict, ex);
+                }
+            }
+        }
+
+        [HttpPut]
+        public HttpResponseMessage Put(long id, NovoCliente novoCliente)
+        {
+            using (var contexto = new Contexto())
+            {
+                var clienteModelo = contexto.Clientes
+                    .Where(x => x.Id == id)
+                    .Single();
+
+                clienteModelo.Nome = novoCliente.Nome;
+                clienteModelo.Email = novoCliente.Email;
+
+                try
+                {
+                    contexto.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                catch (Exception ex)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Conflict, ex);
+                }
             }
         }
     }

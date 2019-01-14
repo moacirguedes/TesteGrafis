@@ -6,17 +6,25 @@
 
 <div style="margin:32px;">
 
-	<button mat-raised-button color="primary" (click)="novoProduto()">Novo Produto</button>
+	<button mat-raised-button color="primary" (click)="newProduct()">Novo Produto</button>
 
 	<br />
+	<br />
 
-	<mat-nav-list>
-		<mat-list-item *ngFor="let produto of produtos">
-			<mat-icon>list</mat-icon>
-			{{ produto.Descricao }}
-			<br />
-			{{ produto.Valor }}
-		</mat-list-item>
-	</mat-nav-list>
+	<mat-expansion-panel *ngFor="let produto of produtos" (click)="getImageFromService(produto)">
+		<mat-expansion-panel-header>
+			<mat-panel-title>
+				<mat-icon>note</mat-icon>
+				Descrição: {{ produto.Descricao }}
+				<br />
+				Valor: {{ produto.Valor }}
+			</mat-panel-title>
+		</mat-expansion-panel-header>
+
+		<mat-card>
+			<img mat-card-image [src]="imagesToShow[produto.Id]">
+		</mat-card>
+
+	</mat-expansion-panel>
 
 </div>

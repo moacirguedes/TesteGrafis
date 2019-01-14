@@ -2,14 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 
-class Pedido {
-    public Id: number;
-    public Data: Date;
-	public Valor: number;
-    public Desconto: number;
-    public ValorTotal: number;
-}
-
 class Produto {
 	public Descricao: string;
 	public Valor: number;
@@ -18,6 +10,14 @@ class Produto {
 class Cliente {
 	public Id: number;
 	public Nome: string;
+}
+
+class Pedido {
+    public Id: number;
+    public Data: Date;
+	public Valor: number;
+    public Desconto: number;
+    public ValorTotal: number;
 }
 
 @Component({
@@ -36,7 +36,7 @@ export class PedidosComponent implements OnInit {
 			.subscribe(x => this.pedidos = x);
 	}
 
-	novoPedido() {
+	newOrder() {
 		this.router.navigate(['pedidos/cadastro']);
 	}
 }
